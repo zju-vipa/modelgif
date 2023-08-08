@@ -4,7 +4,6 @@ data/**
 result**/
 *.zip
 *.svg
-*.png
 *.jpg
 plot/
 run*/
