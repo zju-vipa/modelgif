@@ -1,0 +1,8 @@
+adv_train
+data
+Fine-Pruning
+finetune_10
+finetune_model
+model*/
+**/__pycache__/**
+run*.sh

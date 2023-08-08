@@ -1,0 +1,6 @@
+run*.sh
+**/__pycache__/**
+models*/*
+results*/*
+run*/
+*.pdf

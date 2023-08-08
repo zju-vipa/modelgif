@@ -1,0 +1,11 @@
+**/__pycache__/**
+run**.sh
+data/**
+result**/
+*.zip
+*.svg
+*.png
+*.jpg
+plot/
+run*/
+*.pdf
