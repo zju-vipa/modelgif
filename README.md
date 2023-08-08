@@ -51,6 +51,13 @@ pip install -r requirements.txt
 ## Citation
 
 ```
+@InProceedings{Song_2023_ICCV,
+    author    = {Song, Jie and Xu, Zhengqi and Wu, Sai and Chen, Gang and Song, Mingli},
+    title     = {ModelGiF: Gradient Fields for Model Functional Distance},
+    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+    month     = {October},
+    year      = {2023}
+}
 ```
 
 ## Contact
