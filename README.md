@@ -26,15 +26,11 @@ pillow
 
 ## Experiments
 
-More experimental details are provided below.
-
-- [Task Relatedness Estimation]()
-- [Intellectual Property Protection]()
-- [Model Unlearning Verification]()
+- [Task Relatedness Estimation](task_relatedness)
+- [Intellectual Property Protection](intellectual_property_protection)
+- [Model Unlearning Verification](model_unlearning)
 
 ## Citation
-
-If you use this repository for academic research, you are highly encouraged (though not required) to cite our paper:
 
 ```
 ```
