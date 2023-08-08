@@ -1,8 +1,8 @@
 # Intellectual Property Protection with ModelGiF
 
-1. Download datasets and pretrained models from [google drive](https://drive.google.com/drive/folders/1idozSeUa9fHQBdPwMGWmQ7GhZuD3Rtpc?usp=sharing)  provided by [this work](https://github.com/guanjiyang/SAC)
+1. Download datasets and pretrained models from [google drive](https://drive.google.com/drive/folders/1idozSeUa9fHQBdPwMGWmQ7GhZuD3Rtpc?usp=sharing)  provided by [Guan et al](https://github.com/guanjiyang/SAC)
 
-   - including data, adv_train, Fine-Pruning, finetune_10, finetune_model, model.
+   - Including `data`, `adv_train`, `Fine-Pruning`, `finetune_10`, `finetune_model`, and `model`.
 
 2. Generate the reference samples of ModelGiF
 
@@ -16,4 +16,4 @@
    python ipp_task.py -n=field_cosdis -g=0
    ```
 
-
+The output results are shown in `run/field_cosdis.log`.

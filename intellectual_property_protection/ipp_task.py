@@ -53,27 +53,13 @@ skip_mode = args.sk  # 0:last half, 1 front half, 2: skip odd
 seed = args.seed
 n_steps = 50
 dataset_name = [
-    ('field_sample', 512, ["sort_by_gap"]),
-    ('field_sample', 512, ["sort_by_distance_irr"]),
-    ('field_sample', 512, ["sort_by_distance_sur"]),
-    ('field_sample', 256, ["sort_by_gap"]),
+    ('field_sample', 512, ["sort_by_distance_irr"]), # sort distance between irrelevant models and attacker models
     ('field_sample', 256, ["sort_by_distance_irr"]),
-    ('field_sample', 256, ["sort_by_distance_sur"]),
-    ('field_sample', 128, ["sort_by_gap"]),
     ('field_sample', 128, ["sort_by_distance_irr"]),
-    ('field_sample', 128, ["sort_by_distance_sur"]),
-    ('field_sample', 64, ["sort_by_gap"]),
     ('field_sample', 64, ["sort_by_distance_irr"]),
-    ('field_sample', 64, ["sort_by_distance_sur"]),
-    ('field_sample', 32, ["sort_by_gap"]),
     ('field_sample', 32, ["sort_by_distance_irr"]),
-    ('field_sample', 32, ["sort_by_distance_sur"]),
-    ('field_sample', 16, ["sort_by_gap"]),
     ('field_sample', 16, ["sort_by_distance_irr"]),
-    ('field_sample', 16, ["sort_by_distance_sur"]),
-    ('field_sample', 8, ["sort_by_gap"]),
     ('field_sample', 8, ["sort_by_distance_irr"]),
-    ('field_sample', 8, ["sort_by_distance_sur"]),
 ]
 
 

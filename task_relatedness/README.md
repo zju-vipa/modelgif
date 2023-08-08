@@ -2,15 +2,20 @@
 
 ![image-20230808004810408](assets/README/image-20230808004810408.png)
 
-Unzip the [reference data(cutmix)]() to `./data`.
+## Prepare data and models
+
+Unzip the [reference data(cutmix)](https://drive.google.com/drive/folders/1Fxbo0eEgWUQasvYamu5qqdOB1Y5ur6kT) to `./data`.
 
 - Raw data can be obtained from [taskonomy official depository](https://github.com/StanfordVL/taskonomy/tree/master/data)
 
-Unzip the [taskonomy models]() to `\${USER_HOME}\$/.cache/torch/hub/checkpoints/`.
+Unzip the [taskonomy models](https://github.com/alexsax/visual-prior/tree/networks) to `\${USER_HOME}\$/.cache/torch/hub/checkpoints/`.
 
 - [Taskonomy official depository](https://github.com/alexsax/visual-prior/tree/networks)
 
+## Task relatedness estimation
+
 Generate the gradient field for all taskonomy pretrained models with the specified reference data.
+
 ```shell
 python generate_field.py --exp=1 -r=./result_featuremap_tk_rb -i=reference_data_cutmix_1000 -p=result_cutmix_1000 -g=0
 ```
@@ -35,7 +40,7 @@ python compare_field.py -d=0 -r=./result_featuremap_tk_rb -p=result_cutmix_1000 
 - `-p` The file where the intermediate results are saved in the project\'s directory，Keep consistent with `generate_field.py`
 - `-g` Select the gpu according to its id.
 
-The results are in the last few lines of the. log file output by `compare_field.py`
+The results are in the last few lines of the `.log` file from `compare_field.py`.
 
 ```
   9.87795949e-01 9.96031106e-01 9.98350918e-01 2.95162206e-09
@@ -49,9 +54,29 @@ The results are in the last few lines of the. log file output by `compare_field.
  -0.86029412 -0.92647059 -0.95343137 -0.95588235 -0.81617647 -0.76960784
  -0.80637255 -0.86764706 -0.91666667 -0.71323529 -0.56372549]
 ./result_featuremap_tk_rb/result_cutmix_1000
--0.8349192618223761 <- result(use absolute value)
-[-0.6540782  -0.8627451  -0.66513304 -0.79679807 -0.87254902 -0.66513304
- -0.86029412 -0.90441176 -0.95833333 -0.9754902  -0.84313725 -0.75735294
- -0.80637255 -0.8995098  -0.8995098  -0.71813725 -0.56617647]
--0.8061859972702815
+Spearman correlation: -0.8349192618223761
 ```
+
+## Visualization
+
+### Visualize affinity matrix
+
+```
+python plot_heatmap.py
+```
+
+- If you want to visualize the other affinity matrix, please modify the variable `affi` in the `plot_heatmap.py`  manually. 
+- The affinity matrix of ModelGiF can be obtained in the last few lines of the `.log` file from `compare_field.py`.
+
+![image-20230808160942883](assets/README/image-20230808160942883.png)
+
+### Similarity tree
+
+```shell
+python plot_tree.py
+```
+
+- If you want to plot the similarity tree by other affinity matrix, please modify the variable `affi` in the `plot_tree.py`  manually. 
+- The affinity matrix of ModelGiF can be obtained in the last few lines of the `.log` file from `compare_field.py`.
+
+![image-20230808161015894](assets/README/image-20230808161015894.png)

@@ -144,7 +144,7 @@ for task1, task_att1 in task_dict.items():
         logger.info(dis)
         affinity_matrix[index1, index2] = dis
         affinity_matrix[index2, index1] = dis
-
+logger.info("Affinity Matrics")
 logger.info(f'{affinity_matrix}')
 np.save(os.path.join(root_dir, args.lg, f'{args.path}.npy'), affinity_matrix)
 
@@ -167,30 +167,4 @@ logger.info(corr_value_matrix0)
 max_corr = 0
 mean_corr0 = np.mean(corr_value_matrix0)
 logger.info(path_name)
-logger.info(mean_corr0)
-
-with open(r'./data/affinities/wins_vs_pixels_16k.pkl', 'rb') as f:
-    data = pickle.load(f)
-
-t_winrate_matrix = np.zeros((len(task_list_origin), len(task_list_origin)))
-for i, task1 in enumerate(task_list_origin):
-    for j, task2 in enumerate(task_list_origin):
-        t_winrate_matrix[i, j] = data[task1 + "__" + task2]
-
-# t_winrate_matrix = np.delete(t_winrate_matrix, (11, 14, 16), axis=0)
-# t_winrate_matrix = np.delete(t_winrate_matrix, (11, 14, 16), axis=1)
-
-# t_winrate_matrix = np.delete(t_winrate_matrix, (7), axis=0)
-# t_winrate_matrix = np.delete(t_winrate_matrix, (7), axis=1)
-
-# corr_value_matrix = np.zeros(len(task_list) - 1)
-corr_value_matrix = np.zeros(len(task_list))
-for j, task in enumerate(task_list):
-    # if j >= 13:
-    #     break
-    temp, _ = spearmanr(t_winrate_matrix[:, j], affinity_matrix[:, j])
-    corr_value_matrix[j] = temp
-logger.info(corr_value_matrix)
-max_corr = 0
-mean_corr = np.mean(corr_value_matrix)
-logger.info(mean_corr)
+logger.info(f"Spearman correlation: {mean_corr0}")
