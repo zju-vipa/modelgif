@@ -1,8 +1,8 @@
 # ModelGiF
 
-This repository is an implementation of the paper [ModelGiF: Gradient Fields for Model Functional Distance]().  We provide theoretical insights into the proposed ModelGiF for model functional distance, and validate the effectiveness of the proposed ModelGiF with a suite of testbeds, including task relatedness estimation, intellectual property protection, and model unlearning verification. For more details, please read the paper.
+This repository is an implementation of the paper [https://openaccess.thecvf.com/content/ICCV2023/papers/Song_ModelGiF_Gradient_Fields_for_Model_Functional_Distance_ICCV_2023_paper.pdf](). We provide theoretical insights into the proposed ModelGiF for model functional distance, and validate the effectiveness of the proposed ModelGiF with a suite of testbeds, including task relatedness estimation, intellectual property protection, and model unlearning verification. For more details, please read the paper.
 
-![image-20230807180641610](assets/README/image-20230807180641610.png)
+![An illustrative diagram of the overall pipeline of obtaining ModelGiF curves.](assets/README/modelgif-illustrative-diagram.png)
 
 ## Dependencies
 
@@ -38,15 +38,15 @@ pip install -r requirements.txt
 
 ## Experiments
 
-| [Task Relatedness Estimation](task_relatedness)              |
-| ------------------------------------------------------------ |
-| All the experimental details about task relatedness estimation are provided in the `task_relatedness` folder. |
-| ![image-20230808004810408](task_relatedness/assets/README/image-20230808004810408.png) |
+| [Task Relatedness Estimation](task_relatedness)                                                                                      |
+|--------------------------------------------------------------------------------------------------------------------------------------|
+| All the experimental details about task relatedness estimation are provided in the [`task_relatedness`](./task_relatedness/) folder. |
+| ![Affinity Matrix Figure](task_relatedness/assets/README/affinity_matrix_figure.png)                                                 |
 
 | [Intellectual Property Protection](intellectual_property_protection) | [Model Unlearning Verification](model_unlearning)            |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | This folder contains the experimental details about intellectual property protection with ModelGiF. | All the experimental details about model unlearning verification are provided in the `model_unlearning` folder. |
-| ![image-20230808162405026](assets/README/image-20230808162405026.png) | ![image-20230808162530234](assets/README/image-20230808162530234.png) |
+| ![Comparison between the proposed ModelGiF and existing methods for IP proctection.](assets/README/modelgif_comparison_cifar.png) | ![Cosine distances between the reference classifier Cref and unrelated classifier Cunrelated, the directly unlearned classifier Cdirect and the approximately unlearned classifier Capprox.](assets/README/cifar10-cos-distances.png) |
 
 ## Citation
 

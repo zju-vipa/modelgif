@@ -41,4 +41,4 @@ To reproduce the picture in the paper, please execute the training script in the
 python plot.py
 ```
 
-![image-20230808153154807](assets/README/image-20230808153154807.png)
+![Cosine distances between the reference classifier Cref and unrelated classifier Cunrelated, the directly unlearned classifier Cdirect and the approximately unlearned classifier Capprox.](assets/README/cifar-cos-distances.png)

@@ -1,15 +1,12 @@
 # Task Relatedness Estimation with ModelGiF
 
-![image-20230808004810408](assets/README/image-20230808004810408.png)
+![Affinity Matrix Figure](assets/README/affinity_matrix_figure.png)
 
 ## Prepare data and models
 
 Unzip the [reference data(cutmix)](https://drive.google.com/drive/folders/1Fxbo0eEgWUQasvYamu5qqdOB1Y5ur6kT) to `./data`.
-
 - Raw data can be obtained from [taskonomy official depository](https://github.com/StanfordVL/taskonomy/tree/master/data)
-
 Unzip the [taskonomy models](https://github.com/alexsax/visual-prior/tree/networks) to `\${USER_HOME}\$/.cache/torch/hub/checkpoints/`.
-
 - [Taskonomy official depository](https://github.com/alexsax/visual-prior/tree/networks)
 
 ## Task relatedness estimation
@@ -68,7 +65,7 @@ python plot_heatmap.py
 - If you want to visualize the other affinity matrix, please modify the variable `affi` in the `plot_heatmap.py`  manually. 
 - The affinity matrix of ModelGiF can be obtained in the last few lines of the `.log` file from `compare_field.py`.
 
-![image-20230808160942883](assets/README/image-20230808160942883.png)
+![Affinity Matrix from ModelGIF](assets/README/affinity_matrix_from_modelgif.png)
 
 ### Similarity tree
 
@@ -79,4 +76,4 @@ python plot_tree.py
 - If you want to plot the similarity tree by other affinity matrix, please modify the variable `affi` in the `plot_tree.py`  manually. 
 - The affinity matrix of ModelGiF can be obtained in the last few lines of the `.log` file from `compare_field.py`.
 
-![image-20230808161015894](assets/README/image-20230808161015894.png)
+![Similarity Tree from ModelGIF](assets/README/similarity_tree_from_modelgif.png)
