@@ -14,9 +14,7 @@ def normalize(image):
     image_data = np.array(image_data)
     img_copy = torch.zeros(image.shape)
     for i in range(3):
-        img_copy[i, :, :] = (image[i, :, :] - image_data[0, i]) / image_data[1,
-                                                                             i]
-
+        img_copy[i, :, :] = (image[i, :, :] - image_data[0, i]) / image_data[1, i]
     return img_copy
 
 
@@ -50,6 +48,7 @@ transform_CIFAR10C_train = transforms.Compose([
         (0.4645897160947712, 0.6514782475490196, 0.5637088950163399),
         (0.18422159112571024, 0.3151505122530825, 0.26127269383599344))
 ])
+
 transform_CIFAR10C_test = transforms.Compose([
     transforms.ToPILImage(),
     transforms.ToTensor(),
@@ -72,7 +71,6 @@ class dataset(Dataset):
         return self.labels.shape[0]
 
     def __getitem__(self, item):
-
         label = torch.tensor(self.labels[item])
         image = np.array(self.images[item, :, :, :] * 255, dtype='uint8')
         image = transform_train(image)
@@ -92,11 +90,9 @@ class dataset1(Dataset):
         return self.labels.shape[0]
 
     def __getitem__(self, item):
-
         label = torch.tensor(self.labels[item])
         image = np.array(self.images[item, :, :, :] * 255, dtype='uint8')
         image = transform_test(image)
-
         return [image, label]
 
 
@@ -104,10 +100,8 @@ class dataset_field_sample(Dataset):
 
     def __init__(self, name, modes=[]):
         super(dataset_field_sample, self).__init__()
-
         self.name = name
         self.data = h5py.File(os.path.join("data", name), 'r')
-
         self.images = torch.tensor(self.data['/data'])
         self.labels = torch.tensor(self.data['/label'])
         self.preds = torch.tensor(self.data['/preds'])
@@ -128,18 +122,15 @@ class dataset_field_sample(Dataset):
             "distance_sur", "distance_irr", "images", "labels", "preds",
             "student_preds", "raw_distance"
         ]
-
         if "sort_by_gap" in modes:
             _, idx = torch.sort(self.distance_irr - self.distance_sur,
                                 descending=True)
             for name in li:
                 getattr(self, name)[:] = getattr(self, name)[idx]
-
         if "sort_by_distance_irr" in modes:
             _, idx = torch.sort(self.distance_irr, descending=True)
             for name in li:
                 getattr(self, name)[:] = getattr(self, name)[idx]
-
         if "sort_by_distance_sur" in modes:
             _, idx = torch.sort(self.distance_sur)
             for name in li:
@@ -149,11 +140,9 @@ class dataset_field_sample(Dataset):
         return self.labels.shape[0]
 
     def __getitem__(self, item):
-
         label = self.labels[item]
         image = self.images[item]
         image = self.trans(image)
-
         return [image, label]
 
 
@@ -170,11 +159,9 @@ class dataset3(Dataset):
         return self.labels.shape[0]
 
     def __getitem__(self, item):
-
         label = torch.tensor(self.labels[item])
         image = np.array(self.images[item, :, :, :] * 255, dtype='uint8')
         image = transform_CIFAR100(image)
-
         return [image, label]
 
 
@@ -186,9 +173,9 @@ class dataset4(Dataset):
         self.data = h5py.File(os.path.join("data", name), 'r')
         self.images = np.array(self.data['/data'])
         self.labels = np.array(self.data['/label'])
-        if train == True:
+        if train:
             self.transform = transform_CIFAR10C_train
-        elif train == False:
+        elif not train:
             self.transform = transform_CIFAR10C_test
 
     def __len__(self):
@@ -198,7 +185,6 @@ class dataset4(Dataset):
         label = torch.tensor(self.labels[item])
         image = np.array(self.images[item, :, :, :] * 255, dtype='uint8')
         image = self.transform(image)
-
         return [image, label]
 
 
@@ -215,7 +201,6 @@ class dataset5(Dataset):
         return self.labels.shape[0]
 
     def __getitem__(self, item):
-
         image = (np.squeeze(self.images[item, :, :, :]))
         image = np.transpose(image, [2, 0, 1])
         image = torch.tensor(image)
@@ -237,12 +222,10 @@ class dataset6(Dataset):
         return self.labels.shape[0]
 
     def __getitem__(self, item):
-
         image = (np.squeeze(self.images[item, :, :, :]))
         image = torch.tensor(image)
         image = normalize(image)
         label = torch.tensor(self.labels[item])
-
         return [image, label]
 
 
@@ -259,7 +242,6 @@ class dataset7(Dataset):
         return self.labels.shape[0]
 
     def __getitem__(self, item):
-
         image = (np.squeeze(self.images[item, :, :, :]))
         image = torch.tensor(image)
         label = torch.tensor(self.labels[item])
@@ -268,6 +250,5 @@ class dataset7(Dataset):
 
 if __name__ == "__main__":
     ds = dataset_field_sample("dna_sample.h5", modes=["sort_by_gap"])
-
     print(ds.distance_sur[:50], len(ds))
     print(ds.distance_irr[:50])

@@ -8,6 +8,7 @@ import torchvision
 import torchvision.transforms as transforms
 from captum.attr import visualization as viz
 
+
 # from sklearn.metrics.pairwise import cosine_similarity, paired_distances
 # os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 def get_parameters(net, numpy=False):
@@ -27,16 +28,17 @@ def get_model(model, architecture, device=torch.device('cuda' if torch.cuda.is_a
     return net
 
 
-
 def get_distance(att1, att2):
     cos_sim_sum = 0.0
     n = len(att1)
     for i in range(n):
         att1_flat = att1[i].flatten()  # tensor 3072
         att2_flat = att2[i].flatten()  # tensor 3072
-        cos_sim = (torch.dot(att1_flat, att2_flat) / (torch.norm(att1_flat) * torch.norm(att2_flat))).cpu().detach().numpy()
+        cos_sim = (torch.dot(att1_flat, att2_flat) / (
+                    torch.norm(att1_flat) * torch.norm(att2_flat))).cpu().detach().numpy()
         cos_sim_sum = cos_sim_sum + cos_sim
-    return n/cos_sim_sum
+    return n / cos_sim_sum
+
 
 def get_distance_input_x_gradient(att1, att2):
     cos_sim_sum = 0.0
@@ -44,9 +46,10 @@ def get_distance_input_x_gradient(att1, att2):
     for i in range(n):
         att1_flat = att1[i].flatten()  # tensor 3072
         att2_flat = att2[i].flatten()  # tensor 3072
-        cos_sim = (torch.dot(att1_flat, att2_flat) / (torch.norm(att1_flat) * torch.norm(att2_flat))).cpu().detach().numpy()
+        cos_sim = (torch.dot(att1_flat, att2_flat) / (
+                    torch.norm(att1_flat) * torch.norm(att2_flat))).cpu().detach().numpy()
         cos_sim_sum = cos_sim_sum + cos_sim
-    return n/cos_sim_sum
+    return n / cos_sim_sum
 
 
 def parameter_distance(model1, model2, order=2, architecture=None, half=False, linear=False, lime=False):
@@ -72,9 +75,6 @@ def parameter_distance(model1, model2, order=2, architecture=None, half=False, l
     return res_list
 
 
-
-
-
 def mean_std_to_array(mean, std, rgb_last=True):
     mean = np.array(mean)
     std = np.array(std)
@@ -87,15 +87,12 @@ def mean_std_to_array(mean, std, rgb_last=True):
     return mean, std
 
 
-
-
-def show_images(attribution,images):
+def show_images(attribution, images):
     # 可视化
     attr_ig0 = np.transpose(attribution[0].squeeze().cpu().detach().numpy(), (1, 2, 0))  # 32,32,3
     attr_ig1 = np.transpose(attribution[1].squeeze().cpu().detach().numpy(), (1, 2, 0))  # 32,32,3
     attr_ig2 = np.transpose(attribution[2].squeeze().cpu().detach().numpy(), (1, 2, 0))  # 32,32,3
     attr_ig3 = np.transpose(attribution[3].squeeze().cpu().detach().numpy(), (1, 2, 0))  # 32,32,3
-
 
     original_image0 = np.transpose((images[0].cpu().detach().numpy() / 2) + 0.5, (1, 2, 0))
 
@@ -135,10 +132,11 @@ def get_distance(att1, att2):
         # cos_sim = (temp_cos_sim / (torch.norm(att1_flat) * torch.norm(att2_flat))).cpu().detach().numpy()
         # cos_sim_sum = cos_sim_sum + cos_sim
 
-        cos_sim = (torch.dot(att1_flat, att2_flat) / (torch.norm(att1_flat) * torch.norm(att2_flat))).cpu().detach().numpy()
+        cos_sim = (torch.dot(att1_flat, att2_flat) / (
+                    torch.norm(att1_flat) * torch.norm(att2_flat))).cpu().detach().numpy()
         # cos_sim = 0.5+0.5*cos_sim
         cos_sim_sum = cos_sim_sum + cos_sim
-    return n/cos_sim_sum
+    return n / cos_sim_sum
 
 
 def get_distance_new_weight(att1, att2):  # 128,3,128,128
@@ -225,7 +223,8 @@ def get_distance_new_weight(att1, att2):  # 128,3,128,128
     else:
         return n / cos_sim_sum
 
-def show_images_green(att,images):
+
+def show_images_green(att, images):
     _ = viz.visualize_image_attr_multiple(np.transpose(att[0].squeeze().cpu().detach().numpy(), (1, 2, 0)),
                                           np.transpose(images[0].squeeze().cpu().detach().numpy(), (1, 2, 0)),
                                           ["original_image", "heat_map"],

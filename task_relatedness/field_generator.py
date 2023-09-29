@@ -42,9 +42,7 @@ def _reshape_and_not_cumsum(tensor_input: Tensor, num_steps: int,
 class FieldGenerator(GradientAttribution):
     r"""
     Generate the field of the model
-
     """
-
     def __init__(
         self,
         forward_func: Callable,
@@ -109,13 +107,9 @@ class FieldGenerator(GradientAttribution):
         return_convergence_delta: bool = False,
     ) -> Union[TensorOrTupleOfTensorsGeneric, Tuple[
             TensorOrTupleOfTensorsGeneric, Tensor]]:
-
         is_inputs_tuple = _is_tuple(inputs)
-
         inputs, baselines = _format_input_baseline(inputs, baselines)
-
         _validate_input(inputs, baselines, n_steps, method)
-
         if internal_batch_size is not None:
             num_examples = inputs[0].shape[0]
             attributions = _batch_attribution(
@@ -138,7 +132,6 @@ class FieldGenerator(GradientAttribution):
                 n_steps=n_steps,
                 method=method,
             )
-
         if return_convergence_delta:
             start_point, end_point = baselines, inputs
             # computes approximation error based on the completeness axiom
@@ -179,7 +172,6 @@ class FieldGenerator(GradientAttribution):
                 [baseline + alpha * (input - baseline) for alpha in alphas],
                 dim=0).requires_grad_()
             for input, baseline in zip(inputs, baselines))
-
         additional_forward_args = _format_additional_forward_args(
             additional_forward_args)
         # apply number of steps to additional forward args
@@ -188,10 +180,8 @@ class FieldGenerator(GradientAttribution):
         # the number of batches.
         # dim -> (bsz * #steps x additional_forward_args[0].shape[1:], ...)
         input_additional_args = (_expand_additional_forward_args(
-            additional_forward_args, n_steps) if additional_forward_args
-                                 is not None else None)
+            additional_forward_args, n_steps) if additional_forward_args is not None else None)
         expanded_target = _expand_target(target, n_steps)
-
         # grads: dim -> (bsz * #steps x inputs[0].shape[1:], ...)
         grads = self.gradient_func(
             forward_fn=self.forward_func,
@@ -199,13 +189,11 @@ class FieldGenerator(GradientAttribution):
             target_ind=expanded_target,
             additional_forward_args=input_additional_args,
         )
-
         scaled_grads = [
             grad.contiguous().view(n_steps, -1) *
             torch.tensor(step_sizes).view(n_steps, 1).to(grad.device)
             for grad in grads
         ]
-
         # flattening grads so that we can multilpy it with step-size
         # calling contiguous to avoid `memory whole` problems
         if not self.is_cumsum:

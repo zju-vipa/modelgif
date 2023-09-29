@@ -25,18 +25,14 @@ from torch import Tensor
 
 
 def _reshape_and_cumsum(tensor_input: Tensor, num_steps: int,
-                        num_examples: int, layer_size: Tuple[int,
-                                                             ...]) -> Tensor:
-
-    return torch.cumsum(tensor_input.reshape((num_steps, num_examples) +
-                                             layer_size),
+                        num_examples: int, layer_size: Tuple[int, ...]) -> Tensor:
+    return torch.cumsum(tensor_input.reshape((num_steps, num_examples) + layer_size),
                         dim=0).transpose(0, 1)
 
 
 def _reshape_and_not_cumsum(tensor_input: Tensor, num_steps: int,
                             num_examples: int,
                             layer_size: Tuple[int, ...]) -> Tensor:
-
     return tensor_input.reshape((num_steps, num_examples) +
                                 layer_size).transpose(0, 1)
 
@@ -44,12 +40,11 @@ def _reshape_and_not_cumsum(tensor_input: Tensor, num_steps: int,
 class FieldGenerator(GradientAttribution):
 
     def __init__(
-        self,
-        forward_func: Callable,
-        multiply_by_inputs=True,
-        if_cumsum: bool = True,
+            self,
+            forward_func: Callable,
+            multiply_by_inputs=True,
+            if_cumsum: bool = True,
     ) -> None:
-
         GradientAttribution.__init__(self, forward_func)
         self.if_cumsum = if_cumsum
         self._multiply_by_inputs = multiply_by_inputs
@@ -60,55 +55,51 @@ class FieldGenerator(GradientAttribution):
     # a tuple with both attributions and deltas.
     @typing.overload
     def attribute(
-        self,
-        inputs: TensorOrTupleOfTensorsGeneric,
-        baselines: BaselineType = None,
-        target: TargetType = None,
-        additional_forward_args: Any = None,
-        n_steps: int = 50,
-        method: str = "gausslegendre",
-        internal_batch_size: Union[None, int] = None,
-        return_convergence_delta: Literal[False] = False,
+            self,
+            inputs: TensorOrTupleOfTensorsGeneric,
+            baselines: BaselineType = None,
+            target: TargetType = None,
+            additional_forward_args: Any = None,
+            n_steps: int = 50,
+            method: str = "gausslegendre",
+            internal_batch_size: Union[None, int] = None,
+            return_convergence_delta: Literal[False] = False,
     ) -> TensorOrTupleOfTensorsGeneric:
         ...
 
     @typing.overload
     def attribute(
-        self,
-        inputs: TensorOrTupleOfTensorsGeneric,
-        baselines: BaselineType = None,
-        target: TargetType = None,
-        additional_forward_args: Any = None,
-        n_steps: int = 50,
-        method: str = "gausslegendre",
-        internal_batch_size: Union[None, int] = None,
-        *,
-        return_convergence_delta: Literal[True],
+            self,
+            inputs: TensorOrTupleOfTensorsGeneric,
+            baselines: BaselineType = None,
+            target: TargetType = None,
+            additional_forward_args: Any = None,
+            n_steps: int = 50,
+            method: str = "gausslegendre",
+            internal_batch_size: Union[None, int] = None,
+            *,
+            return_convergence_delta: Literal[True],
     ) -> Tuple[TensorOrTupleOfTensorsGeneric, Tensor]:
         ...
 
     @log_usage()
     def attribute(  # type: ignore
-        self,
-        inputs: TensorOrTupleOfTensorsGeneric,
-        baselines: BaselineType = None,
-        target: TargetType = None,
-        additional_forward_args: Any = None,
-        n_steps: int = 50,
-        method: str = "gausslegendre",
-        internal_batch_size: Union[None, int] = None,
-        return_convergence_delta: bool = False,
+            self,
+            inputs: TensorOrTupleOfTensorsGeneric,
+            baselines: BaselineType = None,
+            target: TargetType = None,
+            additional_forward_args: Any = None,
+            n_steps: int = 50,
+            method: str = "gausslegendre",
+            internal_batch_size: Union[None, int] = None,
+            return_convergence_delta: bool = False,
     ) -> Union[TensorOrTupleOfTensorsGeneric, Tuple[
-            TensorOrTupleOfTensorsGeneric, Tensor]]:
-
+        TensorOrTupleOfTensorsGeneric, Tensor]]:
         # Keeps track whether original input is a tuple or not before
         # converting it into a tuple.
         is_inputs_tuple = _is_tuple(inputs)
-
         inputs, baselines = _format_input_baseline(inputs, baselines)
-
         _validate_input(inputs, baselines, n_steps, method)
-
         if internal_batch_size is not None:
             num_examples = inputs[0].shape[0]
             attributions = _batch_attribution(
@@ -131,7 +122,6 @@ class FieldGenerator(GradientAttribution):
                 n_steps=n_steps,
                 method=method,
             )
-
         if return_convergence_delta:
             start_point, end_point = baselines, inputs
             # computes approximation error based on the completeness axiom
@@ -153,9 +143,7 @@ class FieldGenerator(GradientAttribution):
                    additional_forward_args: Any = None,
                    n_steps: int = 50,
                    method: str = "gausslegendre",
-                   step_sizes_and_alphas: Union[None,
-                                                Tuple[List[float],
-                                                      List[float]]] = None,
+                   step_sizes_and_alphas: Union[None, Tuple[List[float], List[float]]] = None,
                    output_grad=False) -> Tuple[Tensor, ...]:
         if step_sizes_and_alphas is None:
             # retrieve step size and scaling factor for specified
@@ -172,9 +160,7 @@ class FieldGenerator(GradientAttribution):
                 [baseline + alpha * (input - baseline) for alpha in alphas],
                 dim=0).requires_grad_()
             for input, baseline in zip(inputs, baselines))
-
-        additional_forward_args = _format_additional_forward_args(
-            additional_forward_args)
+        additional_forward_args = _format_additional_forward_args(additional_forward_args)
         # apply number of steps to additional forward args
         # currently, number of steps is applied only to additional forward arguments
         # that are nd-tensors. It is assumed that the first dimension is
@@ -182,7 +168,7 @@ class FieldGenerator(GradientAttribution):
         # dim -> (bsz * #steps x additional_forward_args[0].shape[1:], ...)
         input_additional_args = (_expand_additional_forward_args(
             additional_forward_args, n_steps) if additional_forward_args
-                                 is not None else None)
+                                                 is not None else None)
         expanded_target = _expand_target(target, n_steps)
 
         # grads: dim -> (bsz * #steps x inputs[0].shape[1:], ...)
@@ -221,7 +207,7 @@ class FieldGenerator(GradientAttribution):
         else:
             attributions = tuple(total_grad * (input - baseline).unsqueeze(1)
                                  for total_grad, input, baseline in zip(
-                                     total_grads, inputs, baselines))
+                total_grads, inputs, baselines))
         return attributions
 
     def has_convergence_delta(self) -> bool:

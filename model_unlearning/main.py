@@ -8,22 +8,13 @@ parser.add_argument('--epochs', type=int, default=200)
 parser.add_argument('--dataset', type=str, default="CIFAR10")
 parser.add_argument('--model', type=str, default="resnet20")
 parser.add_argument('--model-dir', type=str, default=None)
-parser.add_argument('--save-freq',
-                    type=int,
-                    default=2,
-                    help='frequence of saving checkpoints')
+parser.add_argument('--save-freq', type=int, default=2, help='frequence of saving checkpoints')
 parser.add_argument('--id', type=str, default='')
 parser.add_argument('-s', '--seed', type=int, default=0)
 parser.add_argument('--nc', type=int, default=10, help="num classes")
 parser.add_argument('--ul', action="store_true", help="unlearning")
-parser.add_argument('--mix-label',
-                    action="store_true",
-                    help="mix label for unlearning")
-parser.add_argument('-g',
-                    '--gpu',
-                    default=None,
-                    type=str,
-                    help='GPU id to use.')
+parser.add_argument('--mix-label', action="store_true", help="mix label for unlearning")
+parser.add_argument('-g', '--gpu', default=None, type=str, help='GPU id to use.')
 arg = parser.parse_args()
 
 if arg.gpu is not None:

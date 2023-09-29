@@ -25,7 +25,6 @@ def field_distance(att1, att2):
 n_steps = 50
 
 if __name__ == '__main__':
-
     models = []
     teacher = load_model(0, "teacher")
     for i in tqdm(range(6), total=6):
@@ -47,7 +46,6 @@ if __name__ == '__main__':
                                                num_workers=8,
                                                batch_size=BATCH_SIZE,
                                                shuffle=False)
-
     imgs = []
     labels = []
     attr_scores = []
@@ -58,8 +56,6 @@ if __name__ == '__main__':
     teacher_ig = FieldGenerator(teacher)
     for i, (img,
             target) in enumerate(tqdm(train_loader, total=len(train_loader))):
-        # if i > 3:
-        #     break
         x = normalization(img).cuda()
         y = torch.argmax(teacher(x), dim=1)
         attr_teacher = teacher_ig.attribute(x, target=y).flatten(2)
@@ -90,12 +86,10 @@ if __name__ == '__main__':
     # _, idx = torch.sort(attr_scores, descending=True)
     # for s in [attr_scores, imgs, labels, preds, student_preds]:
     #     s[:] = s[idx]
-
     # print(attr_scores)
 
     file1 = h5py.File('data/reference_sample.h5', 'w')
     # print(attr_scores.shape)
-
     file1.create_dataset("/data", data=np.array(imgs))
     file1.create_dataset("/label", data=np.array(labels))
     file1.create_dataset("/distance", data=np.array(attr_scores))

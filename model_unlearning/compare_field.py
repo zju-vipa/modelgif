@@ -11,11 +11,7 @@ parser.add_argument('--model2', type=str, default="resnet20")
 parser.add_argument('--path2', type=str, default="ckpt_CIFAR10_2")
 parser.add_argument('--fix-epoch', type=int, default=-1)
 parser.add_argument('--nc', type=int, default=10, help="num classes")
-parser.add_argument('-g',
-                    '--gpu',
-                    default=None,
-                    type=str,
-                    help='GPU id to use.')
+parser.add_argument('-g', '--gpu', default=None, type=str, help='GPU id to use.')
 arg = parser.parse_args()
 if arg.gpu is not None:
     os.environ['CUDA_VISIBLE_DEVICES'] = arg.gpu
@@ -46,18 +42,15 @@ def compute_attr(net, path, dataloader):
     net.eval()
     net.cuda()
     attrs = []
-
     # def w(img):
     #     output = net(img)
     #     return output.sum(1)
-
     ig = FieldGenerator(net)
     for x, y in tqdm(dataloader, total=len(dataloader)):
         x = x.cuda()
         y = y.cuda()
         # y = net(x)
         # y = torch.argmax(y, dim=1).detach()
-
         # attr = ig.attribute(x, target=y).flatten(2)
         attr = ig.attribute(x, target=y).flatten(2)
         # attr = (attr - attr.mean(2, keepdim=True)) / attr.std(2, keepdim=True)
@@ -90,7 +83,6 @@ def compare(path1, path2, dataloader):
         net2.linear = torch.nn.Linear(64, arg.nc)
     attr1 = compute_attr(net1, path1, dataloader)
     attr2 = compute_attr(net2, path2, dataloader)
-
     return calc_distance(attr1, attr2)
 
 
@@ -101,7 +93,6 @@ def main():
                                     unlearning_drop=True,
                                     num_classes=arg.nc,
                                     is_probe=True)
-
     dataloader = DataLoader(probe_data,
                             batch_size=4,
                             shuffle=False,

@@ -7,9 +7,7 @@ for title, dataset in zip(["CIFAR10", "CIFAR100"], ['cf10', 'cf100']):
         arr = []
         for i in range(1):
             iter = i + 1
-            arr.append(
-                np.load(
-                    f"results/{dataset}_ref_vs_{method}{iter}/distance.npy"))
+            arr.append(np.load(f"results/{dataset}_ref_vs_{method}{iter}/distance.npy"))
         return np.stack(arr)
 
     unrelated = load_results("un")
@@ -29,20 +27,15 @@ for title, dataset in zip(["CIFAR10", "CIFAR100"], ['cf10', 'cf100']):
         print(s.shape)
         # print(s)
         ax.fill_between(x, m - s, m + s, facecolor=color + (0.5, ))
-
-        ax.annotate(r'(%s: %f)' % (ann, m[-1]), (130, (m[65] + offset)),
-                    color=color,
-                    fontsize=18)
+        ax.annotate(r'(%s: %f)' % (ann, m[-1]), (130, (m[65] + offset)), color=color, fontsize=18)
         ax.set_xlabel("Epoch(t)", fontsize=23)
         ax.set_ylabel("Distance", fontsize=23)
         # ax.set_yscale('logit')
         ax.plot(x, m, label=label, color=color)
-
         for l in ax.get_xticklabels():
             l.set_fontsize(18)
         for l in ax.get_yticklabels():
             l.set_fontsize(18)
-
     fig, ax = plt.subplots(1, 1, figsize=(10, 5))
 
     def float_color(r, g, b):
@@ -64,7 +57,6 @@ for title, dataset in zip(["CIFAR10", "CIFAR100"], ['cf10', 'cf100']):
              label=r'$C^{(200)}_{ref} v.s. C^{(t)}_{direct}$',
              ann="direct",
              offset=-0.1)
-
     plot_fig(ax,
              approx,
              color=float_color(102, 205, 170),

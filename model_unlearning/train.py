@@ -45,8 +45,7 @@ class TrainFn:
         if save_freq is not None and save_freq > 0:
             if not os.path.exists(models_dir):
                 os.mkdir(models_dir)
-            self.save_dir = os.path.join(models_dir,
-                                         f"ckpt_{save_name}_{exp_id}")
+            self.save_dir = os.path.join(models_dir, f"ckpt_{save_name}_{exp_id}")
             if not os.path.exists(self.save_dir):
                 os.mkdir(self.save_dir)
         else:
@@ -232,7 +231,6 @@ class TrainFn:
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
-
         self.logger.info(f'Accuracy: {100 * correct / total} %')
         return correct / total
 
@@ -256,7 +254,6 @@ def validate(dataset, val_model, batch_size=128):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
-
     print(f'Accuracy: {100 * correct / total} %')
     return correct / total
 

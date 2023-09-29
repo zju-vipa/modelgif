@@ -1,7 +1,6 @@
 from functools import reduce
 import saliency
 from skimage import feature
-# from skimage.measure import compare_ssim as ssim
 from saliency.core import VisualizeImageGrayscale
 import torch
 from PIL import Image
@@ -43,17 +42,14 @@ def decode_segmap(image, nc=17):
         (0, 64, 0),
         (128, 64, 0)
     ])
-
     r = np.zeros_like(image).astype(np.uint8)
     g = np.zeros_like(image).astype(np.uint8)
     b = np.zeros_like(image).astype(np.uint8)
-
     for l in range(0, nc):
         idx = image == l
         r[idx] = label_colors[l, 0]
         g[idx] = label_colors[l, 1]
         b[idx] = label_colors[l, 2]
-
     rgb = np.stack([r, g, b], axis=2)
     return rgb
 
@@ -69,7 +65,6 @@ def normalize_image(x):
 def abs_grayscale_norm(img):
     """Returns absolute value normalized image 2D."""
     assert isinstance(img, np.ndarray), "img should be a numpy array"
-
     shp = img.shape
     if len(shp) < 2:
         raise ValueError("Array should have 2 or 3 dims!")
@@ -84,7 +79,6 @@ def abs_grayscale_norm(img):
 def diverging_norm(img):  # [-1,1]
     """Returns image with positive and negative values."""
     assert isinstance(img, np.ndarray), "img should be a numpy array"
-
     shp = img.shape
     if len(shp) < 2:
         raise ValueError("Array should have 2 or 3 dims!")
@@ -99,12 +93,10 @@ def diverging_norm(img):  # [-1,1]
 def get_field_cosdis(att1, att2, is_ig=False):
     if is_ig:
         att1, att2 = att1.flatten(1), att2.flatten(1)
-
     # cos dis
     cur_dis = 1 - torch.cosine_similarity(
         att1, att2, dim=2 if not is_ig else 1)
     result = (torch.mean(cur_dis)).numpy()
-
     return result
 
 
@@ -121,14 +113,11 @@ def scalestd(att, is_ig=False):
 def get_field_cosdis_norm(att1, att2, is_ig=False):
     if is_ig:
         att1, att2 = att1.flatten(1), att2.flatten(1)
-
     att1, att2 = scalestd(att1), scalestd(att2)
-
     # cos dis
     cur_dis = 1 - torch.cosine_similarity(
         att1, att2, dim=2 if not is_ig else 1)
     result = (torch.mean(cur_dis)).numpy()
-
     return result
 
 
@@ -172,7 +161,6 @@ def get_field_absdis(att1, att2):
 def get_distance_spr(att1, att2):
     # att1 = torch.nn.functional.relu(att1, inplace=True)
     # att2 = torch.nn.functional.relu(att2, inplace=True)
-
     cos_sim_sum = 0.0
     n = len(att1)
     sum = 0
@@ -244,9 +232,7 @@ def get_distance_spr(att1, att2):
         att1_flat = att1[i].flatten()  # tensor 49152
         att2_flat = att2[i].flatten()  # tensor 49152
         temp_cos_sim = torch.dot(att1_flat, att2_flat)  # tensor 1
-        cos_sim = (temp_cos_sim /
-                   max(torch.norm(att1_flat) * torch.norm(att2_flat),
-                       1e-8)).cpu().detach().numpy()
+        cos_sim = (temp_cos_sim / max(torch.norm(att1_flat) * torch.norm(att2_flat), 1e-8)).cpu().detach().numpy()
 
         # ig 0.813 0.825 |
         # att1_flat = att1[i].flatten()  # tensor 49152
@@ -330,7 +316,6 @@ def get_distance_spr(att1, att2):
     cos_sim_sum = max(cos_sim_sum, 1e-8)
     return (n / cos_sim_sum)
     # return (n / cos_sim_sum).__abs__()
-
     # print((n / cos_sim_sum))
     # return (1- cos_sim_sum/n)
 
@@ -343,15 +328,11 @@ def get_distance(att1, att2):
     for i in range(n):
         att1_flat = att1[i].flatten()  # tensor 49152
         att2_flat = att2[i].flatten()  # tensor 49152
-
         temp_cos_sim = torch.dot(att1_flat, att2_flat)  # tensor 1
-
         if temp_cos_sim.item() < 0:
             sum = sum + 1
         temp_cos_sim = torch.nn.functional.relu(temp_cos_sim, inplace=True)
-        cos_sim = (temp_cos_sim /
-                   (torch.norm(att1_flat) *
-                    torch.norm(att2_flat))).cpu().detach().numpy()
+        cos_sim = (temp_cos_sim / (torch.norm(att1_flat) * torch.norm(att2_flat))).cpu().detach().numpy()
         cos_sim_sum = cos_sim_sum + cos_sim
     # print(sum)
     return n / cos_sim_sum
@@ -401,20 +382,17 @@ def get_distance_new(att1, att2):
         cos_sim = (temp_cos_sim /
                    (torch.norm(att1_flat) *
                     torch.norm(att2_flat))).cpu().detach().numpy()
-
         cos_sim_sum = cos_sim_sum + cos_sim
     print(sum)
     return n / cos_sim_sum
 
 
-#
 # def get_distance_new(att1, att2):  # 128,3,128,128
 #     cos_sim_sum = 0.0
 #     n = len(att1)
 #     sum = 0
 #     w = att1.shape[2]
 #     h = att1.shape[3]
-#
 #
 #
 #     # for i in range(3*w*h):
@@ -455,7 +433,6 @@ def get_distance_new(att1, att2):
 #         cos_sim_sum = cos_sim_sum + cos_sim
 #
 #
-#
 #     print(sum)
 #     print(nn/cos_sim_sum)
 #     return nn/cos_sim_sum
@@ -467,22 +444,19 @@ def get_distance_new_weight(att1, att2):  # 128,3,128,128
     att2_new = att2.view(n, -1)  # 6,49152
     att1_new = att1_new.cpu().permute(1, 0)
     att2_new = att2_new.cpu().permute(1, 0)
-
     nn = len(att1_new)
     for i in range(nn):
         att1_flat = att1_new[i].flatten()  # tensor 49152
         att2_flat = att2_new[i].flatten()  # tensor 49152
         temp_cos_sim = torch.dot(att1_flat, att2_flat)  # tensor 1
         temp_cos_sim = torch.nn.functional.relu(temp_cos_sim, inplace=True)
-        weigt = temp_cos_sim / (torch.norm(att1_flat) *
-                                torch.norm(att2_flat)).unsqueeze_(0)  # 越小越相似
+        weigt = temp_cos_sim / (torch.norm(att1_flat) * torch.norm(att2_flat)).unsqueeze_(0)  # 越小越相似
         if i == 0:
             weights = weigt
         else:
             weights = torch.cat((weights, weigt), dim=0)
     weights = torch.tensor(weights, dtype=torch.float32)
     # print("weights")
-
     # # 越相似，权重越大
     # weights_min = weights.min()
     # weights_max = weights.max()
@@ -490,7 +464,6 @@ def get_distance_new_weight(att1, att2):  # 128,3,128,128
     #     weights = torch.ones_like(weights)
     # else:
     #     weights = (weights_max - weights) / (weights_max - weights_min)
-
     # # weights[-1,1] 越大越相似，越相似，权重越高
     # weights_min = weights.min()
     # weights_max = weights.max()
@@ -499,7 +472,6 @@ def get_distance_new_weight(att1, att2):  # 128,3,128,128
     #     weights = torch.ones_like(weights)
     # else:
     #     weights = (weights-weights_min) / (weights_max - weights_min)
-
     # weights[-1,1] 越大越相似，越相似，权重越小
     weights_min = weights.min()
     weights_max = weights.max()
@@ -508,7 +480,6 @@ def get_distance_new_weight(att1, att2):  # 128,3,128,128
         weights = torch.zeros_like(weights)
     else:
         weights = (weights_max - weights) / (weights_max - weights_min)
-
     cos_sim_sum = 0.0
     sum = 0
     for i in range(n):
@@ -519,7 +490,6 @@ def get_distance_new_weight(att1, att2):  # 128,3,128,128
         # weights = weights.unsqueeze_(0)
         # att1_flat = att1_flat.unsqueeze_(0)
         # att2_flat = att2_flat.unsqueeze_(0)
-
         # temp_cos_sim = torch.matmul(att1_flat, att2_flat,weights )  # tensor 1
         # temp_cos_sim = att1_flat@att2_flat@weights
         # temp_cos_sim = att1_flat.dot(weights)
@@ -527,14 +497,11 @@ def get_distance_new_weight(att1, att2):  # 128,3,128,128
         # matrixs = [att1_flat, att2_flat,weights]
         #
         # temp_cos_sim = reduce(np.dot, matrixs)
-
         temp_cos_sim = (att1_flat * att2_flat * weights).sum()
         if temp_cos_sim.item() < 0:
             sum = sum + 1
         temp_cos_sim = torch.nn.functional.relu(temp_cos_sim, inplace=True)
-
         # print(m.eq(temp_cos_sim))
-
         cos_sim = (temp_cos_sim /
                    (torch.norm(att1_flat) *
                     torch.norm(att2_flat))).cpu().detach().numpy()
@@ -542,10 +509,7 @@ def get_distance_new_weight(att1, att2):  # 128,3,128,128
     # print(sum)
     # print(n / cos_sim_sum)
     # print(n / cos_sim_sum)
-
     if cos_sim_sum == 0:
         return 1
     else:
         return n / cos_sim_sum
-
-    # return n / cos_sim_sum

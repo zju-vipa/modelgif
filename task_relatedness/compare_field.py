@@ -6,19 +6,9 @@ import argparse
 parser = argparse.ArgumentParser(description='Attribution Map Comparison')
 parser.add_argument('-r', '--root', default='./result_field_featuremap_tk', help='save root')
 parser.add_argument('-p', '--path', default='result_1000', help='config name')
-parser.add_argument('-g',
-                    '--gpu',
-                    default=None,
-                    type=str,
-                    help='Index of GPU to use.')
-parser.add_argument('-d',
-                    '--distance',
-                    default=0,
-                    type=int,
-                    help='methods for distance comparison')
-parser.add_argument('--ig',
-                    action="store_true",
-                    help='use integrated gradient')
+parser.add_argument('-g', '--gpu', default=None, type=str, help='Index of GPU to use.')
+parser.add_argument('-d', '--distance', default=0, type=int, help='methods for distance comparison')
+parser.add_argument('--ig', action="store_true", help='use integrated gradient')
 parser.add_argument('--lh', action="store_true", help='last half')
 parser.add_argument('--lg', default="default", type=str, help='log group')
 
@@ -109,7 +99,6 @@ task_dict = dict(zip(task_list, list_zero))
 logger.info(path_name)
 for key in task_dict:
     logger.info(key)
-
     if os.path.exists(f"{path_name}/{key}") and os.path.exists(
             f"{path_name}/{key}/{key}_att.npy"):
         temp = np.load(f"{path_name}/{key}/{key}_att.npy")
@@ -120,7 +109,6 @@ for key in task_dict:
             temp = np.ascontiguousarray(temp[:, 1::2])
         task_dict[key] = torch.from_numpy(temp)
         logger.info("加载了")
-
         continue
     else:
         raise NotImplementedError
@@ -139,7 +127,6 @@ for task1, task_att1 in task_dict.items():
             continue
         # if index2 == 3:
         #     kkk = 5
-
         dis = distance_list[args.distance](task_att1, task_att2, is_ig=args.ig)
         logger.info(dis)
         affinity_matrix[index1, index2] = dis
