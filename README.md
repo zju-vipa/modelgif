@@ -1,6 +1,6 @@
 # ModelGiF
 
-This repository is an implementation of the paper [https://openaccess.thecvf.com/content/ICCV2023/papers/Song_ModelGiF_Gradient_Fields_for_Model_Functional_Distance_ICCV_2023_paper.pdf](). We provide theoretical insights into the proposed ModelGiF for model functional distance, and validate the effectiveness of the proposed ModelGiF with a suite of testbeds, including task relatedness estimation, intellectual property protection, and model unlearning verification. For more details, please read the paper.
+This repository is an implementation of the paper [ModelGiF: Gradient Fields for Model Functional Distance](https://openaccess.thecvf.com/content/ICCV2023/papers/Song_ModelGiF_Gradient_Fields_for_Model_Functional_Distance_ICCV_2023_paper.pdf). We provide theoretical insights into the proposed ModelGiF for model functional distance, and validate the effectiveness of the proposed ModelGiF with a suite of testbeds, including task relatedness estimation, intellectual property protection, and model unlearning verification. For more details, please read the paper.
 
 ![An illustrative diagram of the overall pipeline of obtaining ModelGiF curves.](assets/README/modelgif-illustrative-diagram.png)
 
