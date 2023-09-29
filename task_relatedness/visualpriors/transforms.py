@@ -9,14 +9,14 @@ TASKONOMY_LOCATION = 'https://github.com/StanfordVL/taskonomy/tree/master/taskba
 def representation_transform(img,
                              feature_task='normal',
                              device=default_device):
-    '''
+    """
     Transforms an RGB image into a feature driven by some vision task
         Expects inputs:
             shape  (batch_size, 3, 256, 256)
             values [-1,1]
         Outputs:
             shape  (batch_size, 8, 16, 16)
-    '''
+    """
     return VisualPrior.to_representation(img,
                                          feature_tasks=[feature_task],
                                          device=device)
@@ -25,23 +25,23 @@ def representation_transform(img,
 def multi_representation_transform(img,
                                    feature_tasks=['normal'],
                                    device=default_device):
-    '''
+    """
     Transforms an RGB image into a features driven by some vision tasks
         Expects inputs:
             shape  (batch_size, 3, 256, 256)
             values [-1,1]
         Outputs:
             shape  (batch_size, 8, 16, 16)
-    '''
+    """
     return VisualPrior.to_representation(img, feature_tasks, device)
 
 
 def max_coverage_featureset_transform(img, k=4, device=default_device):
-    '''
+    """
     Transforms an RGB image into a features driven by some vision tasks.
     The tasks are chosen according to the Max-Coverage Min-Distance Featureset
     From the paper:
-        Mid-Level Visual Representations Improve Generalization and Sample Efficiency 
+        Mid-Level Visual Representations Improve Generalization and Sample Efficiency
             for Learning Visuomotor Policies.
         Alexander Sax, Bradley Emi, Amir R. Zamir, Silvio Savarese, Leonidas Guibas, Jitendra Malik.
         Arxiv preprint 2018.
@@ -51,28 +51,12 @@ def max_coverage_featureset_transform(img, k=4, device=default_device):
             values [-1,1]
         Outputs:
             shape  (batch_size, 8*k, 16, 16)
-    '''
+    """
     return VisualPrior.max_coverage_transform(img, k, device)
 
 
 def feature_readout(img, feature_task='normal', device=default_device):
-    '''
-    Transforms an RGB image into a feature driven by some vision task, 
-    then returns the result of a readout of the feature.
-        Expects inputs:
-            shape  (batch_size, 3, 256, 256)
-            values [-1,1]
-        Outputs:
-            shape  (batch_size, 8, 16, 16)
-    '''
-    return VisualPrior.to_predicted_label(img,
-                                          feature_tasks=[feature_task],
-                                          device=device)
-
-
-# 我自己写的
-def get_nets(feature_task='normal', device=default_device):
-    '''
+    """
     Transforms an RGB image into a feature driven by some vision task,
     then returns the result of a readout of the feature.
         Expects inputs:
@@ -80,14 +64,29 @@ def get_nets(feature_task='normal', device=default_device):
             values [-1,1]
         Outputs:
             shape  (batch_size, 8, 16, 16)
-    '''
+    """
+    return VisualPrior.to_predicted_label(img,
+                                          feature_tasks=[feature_task],
+                                          device=device)
+
+
+def get_nets(feature_task='normal', device=default_device):
+    """
+    Transforms an RGB image into a feature driven by some vision task,
+    then returns the result of a readout of the feature.
+        Expects inputs:
+            shape  (batch_size, 3, 256, 256)
+            values [-1,1]
+        Outputs:
+            shape  (batch_size, 8, 16, 16)
+    """
     return VisualPrior.to_get_net(feature_tasks=[feature_task], device=device)
 
 
 def multi_feature_readout(img,
                           feature_tasks=['normal'],
                           device=default_device):
-    '''
+    """
     Transforms an RGB image into a features driven by some vision tasks
     then returns the readouts of the features.
         Expects inputs:
@@ -95,12 +94,11 @@ def multi_feature_readout(img,
             values [-1,1]
         Outputs:
             shape  (batch_size, 8, 16, 16)
-    '''
+    """
     return VisualPrior.to_predicted_label(img, feature_tasks, device)
 
 
 class VisualPrior(object):
-
     max_coverate_featuresets = [
         ['autoencoding'],
         ['segment_unsup2d', 'segment_unsup25d'],
@@ -123,7 +121,7 @@ class VisualPrior(object):
                           img,
                           feature_tasks=['normal'],
                           device=default_device):
-        '''
+        """
             Transforms an RGB image into a feature driven by some vision task(s)
             Expects inputs:
                 shape  (batch_size, 3, 256, 256)
@@ -131,8 +129,8 @@ class VisualPrior(object):
             Outputs:
                 shape  (batch_size, 8, 16, 16)
 
-            This funciton is technically unsupported and there are absolutely no guarantees. 
-        '''
+            This funciton is technically unsupported and there are absolutely no guarantees.
+        """
         VisualPriorRepresentation._load_unloaded_nets(feature_tasks)
         for t in feature_tasks:
             VisualPriorRepresentation.feature_task_to_net[
@@ -150,7 +148,7 @@ class VisualPrior(object):
                            img,
                            feature_tasks=['normal'],
                            device=default_device):
-        '''
+        """
             Transforms an RGB image into a predicted label for some task.
             Expects inputs:
                 shape  (batch_size, 3, 256, 256)
@@ -159,8 +157,8 @@ class VisualPrior(object):
                 shape  (batch_size, C, 256, 256)
                 values [-1,1]
 
-            This funciton is technically unsupported and there are absolutely no guarantees. 
-        '''
+            This funciton is technically unsupported and there are absolutely no guarantees.
+        """
         VisualPriorPredictedLabel._load_unloaded_nets(feature_tasks)
         for t in feature_tasks:
             VisualPriorPredictedLabel.feature_task_to_net[
@@ -180,8 +178,8 @@ class VisualPrior(object):
     @classmethod
     def to_get_net(cls,
                    feature_tasks=['normal'],
-                   device=default_device):  # 我写的！！！！！！！！！
-        '''
+                   device=default_device):
+        """
             Transforms an RGB image into a predicted label for some task.
             Expects inputs:
                 shape  (batch_size, 3, 256, 256)
@@ -191,13 +189,12 @@ class VisualPrior(object):
                 values [-1,1]
 
             This funciton is technically unsupported and there are absolutely no guarantees.
-        '''
+        """
         try:
             VisualPriorPredictedLabel._load_unloaded_nets(feature_tasks)
             for t in feature_tasks:
                 VisualPriorPredictedLabel.feature_task_to_net[
-                    t] = VisualPriorPredictedLabel.feature_task_to_net[t].to(
-                        device)
+                    t] = VisualPriorPredictedLabel.feature_task_to_net[t].to(device)
             nets = [
                 VisualPriorPredictedLabel.feature_task_to_net[t]
                 for t in feature_tasks
@@ -213,8 +210,7 @@ class VisualPrior(object):
             VisualPriorRepresentation._load_unloaded_nets(feature_tasks)
             for t in feature_tasks:
                 VisualPriorRepresentation.feature_task_to_net[
-                    t] = VisualPriorRepresentation.feature_task_to_net[t].to(
-                        device)
+                    t] = VisualPriorRepresentation.feature_task_to_net[t].to(device)
             nets = [
                 VisualPriorRepresentation.feature_task_to_net[t]
                 for t in feature_tasks
@@ -230,24 +226,23 @@ class VisualPrior(object):
             raise NotImplementedError(
                 "max_coverage_transform featureset not implemented for k > 4")
         return cls.to_representation(img,
-                                     feature_tasks=max_coverate_featuresets[k -
-                                                                            1],
+                                     feature_tasks=max_coverate_featuresets[k-1],
                                      device=device)
 
     @classmethod
-    def set_model_dir(model_dir):
+    def set_model_dir(cls, model_dir):
         cls.model_dir = model_dir
 
 
 class VisualPriorRepresentation(object):
-    '''
+    """
         Handles loading networks that transform images into encoded features.
         Expects inputs:
             shape  (batch_size, 3, 256, 256)
             values [-1,1]
         Outputs:
             shape  (batch_size, 8, 16, 16)
-    '''
+    """
     feature_task_to_net = {}
 
     @classmethod
@@ -282,7 +277,7 @@ class VisualPriorRepresentation(object):
 
 
 class VisualPriorPredictedLabel(object):
-    '''
+    """
         Handles loading networks that transform images into transformed images.
         Expects inputs:
             shape  (batch_size, 3, 256, 256)
@@ -290,9 +285,9 @@ class VisualPriorPredictedLabel(object):
         Outputs:
             shape  (batch_size, C, 256, 256)
             values [-1,1]
-            
-        This class is technically unsupported and there are absolutely no guarantees. 
-    '''
+
+        This class is technically unsupported and there are absolutely no guarantees.
+    """
     feature_task_to_net = {}
 
     @classmethod

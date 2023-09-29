@@ -25,7 +25,6 @@ def setup_seed(seed):
 
 
 class OnlyImageDataset(Dataset):
-
     def __init__(self, image_dir, transform):
         super(OnlyImageDataset, self).__init__()
         image_name_list = os.listdir(image_dir)
@@ -62,28 +61,21 @@ def pgd(model, data, labels, random_start=False):  # adv0
     d_max = 1
     data_max.clamp_(d_min, d_max)
     data_min.clamp_(d_min, d_max)
-
     perturbed_data = data.clone().detach()
-
     if random_start:
         # Starting at a uniformly random point
         perturbed_data = perturbed_data + torch.empty_like(
             perturbed_data).uniform_(-1 * epsilon, epsilon)
         perturbed_data = torch.clamp(perturbed_data, min=0, max=1).detach()
-
     for _ in range(k):
         perturbed_data.requires_grad = True
         outputs = model(perturbed_data * 2 - 1)
-
         loss = nn.L1Loss()
-
         cost = -1 * loss(outputs, labels)
-
         # cost = (outputs * labels).mean()
         # print(cost)
         # Update adversarial images
         cost.backward()
-
         gradient = perturbed_data.grad.clone().cuda()
         perturbed_data.grad.zero_()
         with torch.no_grad():
@@ -104,11 +96,9 @@ task_list = task_list_name.split()
 
 def adv(sample_num):
     setup_seed(0)
-
     input_path = f"./data/reference_data_{sample_num}"
     # output_path = f"./data/reference_data_adv1_{sample_num}"
     output_path = f"./data/reference_data_adv0_{sample_num}"
-
     transform_test = transforms.Compose([transforms.ToTensor()])
     testset = OnlyImageDataset(input_path, transform=transform_test)
     BATCH_SIZE = 4
@@ -116,7 +106,6 @@ def adv(sample_num):
                                              num_workers=8,
                                              batch_size=BATCH_SIZE,
                                              shuffle=False)
-
     os.makedirs(output_path, exist_ok=True)
     for i, (input,
             image_name) in enumerate(tqdm(testloader, total=len(testloader))):
@@ -130,12 +119,10 @@ def adv(sample_num):
         model = model.cuda()
         output = model.encoder(imgs * 2 - 1)
         imgs = pgd(model.encoder, imgs, output)  # adv0
-
         imgs = imgs.transpose(1, 3).transpose(1, 2).numpy() * 255
         imgs[:, :, :, :] = imgs[:, :, :, ::-1]
         for image, img_name in zip(imgs, image_name):
             cv2.imwrite(os.path.join(output_path, img_name), image)
-
     # labels = torch.cat(labels,dim=0)
 
 

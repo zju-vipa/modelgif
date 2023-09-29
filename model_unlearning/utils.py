@@ -134,7 +134,6 @@ class UnlearningDataset2(Dataset):
         self.transforms = transform
         self.mix_label = not (is_probe or is_direct)
         self.is_direct = is_direct and not is_probe
-
         class_bin = [[] for i in range(num_classes)]
         for img, lbl in dataset:
             class_bin[lbl].append(img)
@@ -206,7 +205,6 @@ class UnlearningDataset(Dataset):
             return len(self.dataset)
 
     def __getitem__(self, item):
-
         if self.is_direct:
             image, label = self.dataset[item + self.probe_size]
         else:
@@ -233,7 +231,6 @@ def load_dataset(dataset,
     except:
         raise NotImplementedError(
             f"Dataset {dataset} is not implemented by pytorch.")
-
     if "MNIST" in dataset:
         transform = transforms.Compose(
             [transforms.ToTensor(),

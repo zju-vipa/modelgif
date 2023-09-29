@@ -8,7 +8,6 @@ class NoOp:
         def no_op(*args, **kwargs):
             """Accept every signature by doing non-operation."""
             pass
-
         return no_op
 
 
@@ -26,12 +25,10 @@ def get_logger(log_dir, log_name=None, resume="", is_rank0=True):
     if is_rank0:
         logger = logging.getLogger(__name__)
         logger.setLevel(level=logging.INFO)
-
         # StreamHandler
         stream_handler = logging.StreamHandler(sys.stdout)
         stream_handler.setLevel(level=logging.INFO)
         logger.addHandler(stream_handler)
-
         # FileHandler
         mode = "a+" if resume != "" else "w+"
         if log_name is None:
@@ -41,5 +38,4 @@ def get_logger(log_dir, log_name=None, resume="", is_rank0=True):
         logger.addHandler(file_handler)
     else:
         logger = NoOp()
-
     return logger

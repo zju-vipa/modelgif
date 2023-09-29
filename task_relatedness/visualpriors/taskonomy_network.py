@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import warnings
 from typing import Any, Callable, List, Optional, Type, Union  # 一些自我的修改！！
 from torch import Tensor
+
 task_mapping = {
  'autoencoder': 'autoencoding',
  'colorization': 'colorization',
@@ -32,7 +33,6 @@ task_mapping = {
  'vanishing_point': 'vanishing_point'
 }
 
-
 CHANNELS_TO_TASKS = {
     1: ['colorization', 'edge_texture', 'edge_occlusion',  'keypoints3d', 'keypoints2d', 'reshading', 'depth_zbuffer', 'depth_euclidean', ],
     2: ['curvature', 'principal_curvature'],
@@ -42,8 +42,6 @@ CHANNELS_TO_TASKS = {
     64: ['segment_unsup2d', 'segment_unsup25d'],
     1000: ['class_object'],
 }
-
-
 
 PIX_TO_PIX_TASKS = ['colorization', 'edge_texture', 'edge_occlusion',
             'keypoints3d', 'keypoints2d', 'reshading',
@@ -57,7 +55,6 @@ SINGLE_IMAGE_TASKS = PIX_TO_PIX_TASKS + FEED_FORWARD_TASKS
 SIAMESE_TASKS = ['fix_pose', 'jigsaw', 'ego_motion', 'point_match', 'non_fixated_pose']
 DONT_APPLY_TANH_TASKS = ['segment_semantic']
 
-
 TASKS_TO_CHANNELS = {}
 for n, tasks in CHANNELS_TO_TASKS.items():
     for task in tasks:
@@ -65,7 +62,6 @@ for n, tasks in CHANNELS_TO_TASKS.items():
 
 LIST_OF_OLD_TASKS = sorted(list(task_mapping.keys()))
 LIST_OF_TASKS = sorted(list(task_mapping.values()))
-
 
 TASKONOMY_PRETRAINED_WEIGHT_FILES="""autoencoding_decoder-a4a006b5a8b314b9b0ae815c12cf80e4c5f2e6c703abdf65a64a020d3fef7941.pth
 autoencoding_encoder-e35146c09253720e97c0a7f8ee4e896ac931f5faa1449df003d81e6089ac6307.pth
@@ -113,8 +109,8 @@ TASKONOMY_PRETRAINED_WEIGHT_URL_TEMPLATE = 'https://github.com/alexsax/visual-pr
 TASKONOMY_PRETRAINED_URLS = {k.split("-")[0]: TASKONOMY_PRETRAINED_WEIGHT_URL_TEMPLATE.format(filename=k)
                              for k in TASKONOMY_PRETRAINED_WEIGHT_FILES}
 
+
 class TaskonomyNetwork(nn.Module):
-    
     def __init__(self,
                  out_channels=3,
                  eval_only=True,
@@ -124,9 +120,9 @@ class TaskonomyNetwork(nn.Module):
                  is_decoder_mlp=False,
                  apply_tanh=True,
                  progress=True):
-        ''' 
+        """
             out_channels = None for decoder only
-        '''
+        """
         super(TaskonomyNetwork, self).__init__()
         self.encoder = TaskonomyEncoder(eval_only=True)
         self.encoder.normalize_outputs = False
@@ -146,7 +142,6 @@ class TaskonomyNetwork(nn.Module):
         
         if load_decoder_path is not None:
             self.load_decoder(load_decoder_path, model_dir, progress)
-
 
     def load_encoder(self, url, model_dir=None, progress=True):
         checkpoint = torch.utils.model_zoo.load_url(url, model_dir=model_dir, progress=progress)
@@ -169,6 +164,7 @@ class Scissor(torch.nn.Module):
         x = x[:,:,1:h,1:h]
         return x
 
+
 class TaskonomyDecoder(nn.Module):
     """
     Note regarding DeConvolution Layer:
@@ -182,7 +178,6 @@ class TaskonomyDecoder(nn.Module):
     - That's fine, if we remove that row and column, we get the proper outputs we are looking for
     - See https://github.com/vdumoulin/conv_arithmetic to visualize deconvs
     """
-
     def __init__(self, out_channels=3, eval_only=True, is_decoder_mlp=False, apply_tanh=True):
         super(TaskonomyDecoder, self).__init__()
         self.is_decoder_mlp = is_decoder_mlp
@@ -199,28 +194,20 @@ class TaskonomyDecoder(nn.Module):
             self.conv5 = self._make_layer(512, 256)
             self.conv6 = self._make_layer(256, 256)
             self.conv7 = self._make_layer(256, 128)
-
             self.deconv8 = self._make_layer(128, 64, stride=2, deconv=True)
             self.conv9 = self._make_layer(64, 64)
-
             self.deconv10 = self._make_layer(64, 32, stride=2, deconv=True)
             self.conv11 = self._make_layer(32, 32)
-
             self.deconv12 = self._make_layer(32, 16, stride=2, deconv=True)
             self.conv13 = self._make_layer(16, 32)
-
             self.deconv14 = self._make_layer(32, 16, stride=2, deconv=True)
-            
             decoder_output_layers = [nn.Conv2d(16, out_channels, kernel_size=3, stride=1, bias=True, padding=1)]
             if apply_tanh:
                 decoder_output_layers.append(nn.Tanh())
             self.decoder_output = nn.Sequential(*decoder_output_layers)
-
-
         self.eval_only = eval_only
         if self.eval_only:
             self.eval()
-
         for p in self.parameters():
             p.requires_grad = False
 
@@ -231,10 +218,8 @@ class TaskonomyDecoder(nn.Module):
             scissor = Scissor()  # Remove first row and column
         else:
             conv = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False)  # pad = 'SAME'
-
         bn = nn.BatchNorm2d(out_channels, momentum=0.1, affine=True)
         lrelu = nn.LeakyReLU(negative_slope=0.2, inplace=False)
-
         if deconv:
             layer = nn.Sequential(pad, conv, scissor, bn, lrelu)
         else:
@@ -262,16 +247,12 @@ class TaskonomyDecoder(nn.Module):
             x = self.conv5(x)
             x = self.conv6(x)
             x = self.conv7(x)
-
             x = self.deconv8(x)
             x = self.conv9(x)
-
             x = self.deconv10(x)
             x = self.conv11(x)
-
             x = self.deconv12(x)
             x = self.conv13(x)
-
             x = self.deconv14(x)
             x = self.decoder_output(x)
             # add gaussian-noise?
@@ -377,26 +358,21 @@ class Bottleneck(nn.Module):
 
     def forward(self, x):
         residual = x
-
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-
         # out = F.pad(out, pad=(1,1,1,1), mode='constant', value=0)  # other modes are reflect, replicate
         out = self.conv2(out)
         out = self.bn2(out)
         out = self.relu0(out)
-
         out = self.conv3(out)
         out = self.bn3(out)
-
         if self.downsample is not None:
             residual = self.downsample(x)
-
         out += residual
         out = self.relu1(out)
-
         return out
+
 
 class TaskonomyClassificationDecoder(nn.Module):
     def __init__(self, out_channels=3, eval_only=True):
@@ -404,7 +380,6 @@ class TaskonomyClassificationDecoder(nn.Module):
 
 
 class TaskonomyEncoder(nn.Module):
-
     def __init__(self, normalize_outputs=True, eval_only=True, train_penultimate=False, train=False):
         self.inplanes = 64
         super(TaskonomyEncoder, self).__init__()
@@ -428,23 +403,19 @@ class TaskonomyEncoder(nn.Module):
             self.eval()
         for p in self.parameters():
             p.requires_grad = False
-
         if train_penultimate:
             for name, param in self.named_parameters():
                 if 'compress' in name:  # last layers: compress1.weight, compress_bn.weight, compress_bn.bias
                     param.requires_grad = True
                 else:
                     param.requires_grad = False
-
         if train:
             for p in self.parameters():
                 p.requires_grad = True
 
-
     def _make_layer(self, block, planes, blocks, stride=1):
         downsample = None
         layers = []
-
         if self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
                 nn.Conv2d(self.inplanes, planes * block.expansion,
@@ -452,35 +423,29 @@ class TaskonomyEncoder(nn.Module):
                 nn.BatchNorm2d(planes * block.expansion),
             )
         layers.append(block(self.inplanes, planes, downsample=downsample))
-
         self.inplanes = planes * block.expansion
         for i in range(1, blocks - 1):
             layers.append(block(self.inplanes, planes))
-
         downsample = None
         if stride != 1:
             downsample = nn.Sequential(
                 nn.MaxPool2d( kernel_size=1, stride=stride ),
             )
         layers.append(block(self.inplanes, planes, stride, downsample))
-
         return nn.Sequential(*layers)
 
     def forward(self, x):
         x = F.pad(x, pad=(3,3,3,3), mode='constant', value=0)
         #  other modes are reflect, replicate, constant
-
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
         # x = F.pad(x, (0,1,0,1), 'constant', 0)
         x = self.maxpool(x)
-
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
-
         x = self.compress1(x)
         x = self.compress_bn(x)
         x = self.relu1(x)
@@ -493,4 +458,3 @@ class TaskonomyEncoder(nn.Module):
             warnings.warn("Ignoring 'train()' in TaskonomyEncoder since 'eval_only' was set during initialization.", RuntimeWarning)
         else:
             return super(TaskonomyEncoder, self).train(val)
-

@@ -53,7 +53,7 @@ skip_mode = args.sk  # 0:last half, 1 front half, 2: skip odd
 seed = args.seed
 n_steps = 50
 dataset_name = [
-    ('field_sample', 512, ["sort_by_distance_irr"]), # sort distance between irrelevant models and attacker models
+    ('field_sample', 512, ["sort_by_distance_irr"]),  # sort distance between irrelevant models and attacker models
     ('field_sample', 256, ["sort_by_distance_irr"]),
     ('field_sample', 128, ["sort_by_distance_irr"]),
     ('field_sample', 64, ["sort_by_distance_irr"]),
@@ -188,7 +188,6 @@ def output_to_label(output):
 
 
 def cal_correlation(models, dataset_name):
-
     # SAC-normal
     early_Stop = 9999999
     if isinstance(dataset_name, tuple):
@@ -218,7 +217,7 @@ def cal_correlation(models, dataset_name):
                                       batch_size=BATCH_SIZE)
         if dataset_name[1] > 0:
             early_Stop = dataset_name[1] // BATCH_SIZE
-            dataset_name = f'{dataset_name[0]} {early_Stop*BATCH_SIZE}'
+            dataset_name = f'{dataset_name[0]} {early_Stop * BATCH_SIZE}'
         else:
             dataset_name = f'{dataset_name[0]} {len(testset)}'
     else:
